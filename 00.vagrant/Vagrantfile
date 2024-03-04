@@ -13,9 +13,11 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     # Don't boot with headless mode
     vb.gui = false
+    vb.check_guest_additions = false
+    vb.memory = 8192
+    vb.cpus = 4
     vb.customize ["modifyvm", :id, "--audio", "none"] # https://gist.github.com/mxey/ce6911724acee4517692bf683ee90624
-    vb.customize ["modifyvm", :id, "--memory", "8192"]
-    vb.customize ["modifyvm", :id, "--cpus", "4"]
+    vb.customize ['modifyvm', :id, '--graphicscontroller', 'vmsvga']
   end
 
   config.vm.define :admin do |cfg|
@@ -23,8 +25,8 @@ Vagrant.configure("2") do |config|
     cfg.vm.network "private_network", ip: "192.168.56.60"
 
     cfg.vm.provider "virtualbox" do |vb|
-      vb.customize ["modifyvm", :id, "--cpus", "2"]
-      vb.customize ["modifyvm", :id, "--memory", "4096"]
+      vb.memory = 4096
+      vb.cpus = 2
     end
 
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/admin.yml"
