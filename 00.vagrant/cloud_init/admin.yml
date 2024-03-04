@@ -1,0 +1,65 @@
+#cloud-config
+bootcmd:
+ - cloud-init-per once update_hosts_1 echo '' >> /etc/hosts
+ - cloud-init-per once update_hosts_2 echo '192.168.56.60 admin' >> /etc/hosts
+ - cloud-init-per once update_hosts_3 echo '192.168.56.61 ubuntu01' >> /etc/hosts
+ - cloud-init-per once update_hosts_4 echo '192.168.56.62 ubuntu02' >> /etc/hosts
+ - cloud-init-per once update_hosts_5 echo '192.168.56.62 ubuntu03' >> /etc/hosts
+ - cloud-init-per once update_hosts_6 echo '' >> /etc/hosts
+package_upgrade: false
+package_update: false
+write_files:
+  # Enable rc.local
+  - path: /etc/rc.local
+    owner: root:root
+    permissions: "0755"
+    content: |
+      #!/bin/bash -eux
+      #
+      # /etc/rc.local
+
+
+      exit 0
+  - path: /etc/ssh/ssh_config.d/shared_ssh.conf
+    owner: root:root
+    permissions: "0644"
+    content: |
+      Host *
+        UserKnownHostsFile /dev/null
+        StrictHostKeyChecking no
+        LogLevel FATAL
+        AddKeysToAgent yes
+        ForwardAgent yes
+        ForwardX11 yes
+        ServerAliveInterval 60
+        ServerAliveCountMax 5
+users:
+  - default
+  - name: vagrant
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+runcmd:
+    # Change Ubuntu mirror
+  - sed -i -e 's/archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
+  - apt update -y
+    # Install additional packages
+  - apt install -y build-essential ca-certificates curl dnsutils git htop jq lsb-release net-tools p7zip-full unzip vim-nox wget python3-pip python3-dev python3-setuptools python-is-python3
+    # Enable rc.local
+  - sed -i -e '$ a\\n\[Install]\nWantedBy=multi-user.target' /lib/systemd/system/rc-local.service
+  - systemctl enable rc-local.service
+  - systemctl start rc-local.service
+    # Install tcping for linux
+  - curl -L -Ss "https://github.com/pouriyajamshidi/tcping/releases/download/v2.4.0/tcping_amd64.deb" -o "/tmp/tcping.deb" && sudo apt install -y /tmp/tcping.deb
+    # Install snap packages
+  - sudo snap install dog
+  - sudo snap install kubectl --classic
+    # Install yq
+    # https://github.com/mikefarah/yq#plain-binary
+  - DOWNLOAD_URL="https://github.com/mikefarah/yq/releases/download/v4.27.2/yq_linux_amd64" && wget -nd -nH -q $DOWNLOAD_URL -O /usr/local/bin/yq && chmod 755 /usr/local/bin/yq
+    # Install helm
+    # https://helm.sh/docs/intro/install/#from-script
+  - curl -fsSL -o /tmp/get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && sudo bash /tmp/get_helm.sh
+    # Install homebrew
+  - |
+    export OP_USER="vagrant"
+    sudo -u $OP_USER NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/${OP_USER}/.bashrc

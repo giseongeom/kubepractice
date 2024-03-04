@@ -1,0 +1,69 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.boot_timeout = 300
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # ssh
+  config.ssh.forward_agent = false
+  config.ssh.insert_key = false
+
+  # VirtualBox
+  config.vm.provider "virtualbox" do |vb|
+    # Don't boot with headless mode
+    vb.gui = false
+    vb.customize ["modifyvm", :id, "--audio", "none"] # https://gist.github.com/mxey/ce6911724acee4517692bf683ee90624
+    vb.customize ["modifyvm", :id, "--memory", "8192"]
+    vb.customize ["modifyvm", :id, "--cpus", "4"]
+  end
+
+  config.vm.define :admin do |cfg|
+    cfg.vm.hostname = "admin"
+    cfg.vm.network "private_network", ip: "192.168.56.60"
+
+    cfg.vm.provider "virtualbox" do |vb|
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
+      vb.customize ["modifyvm", :id, "--memory", "4096"]
+    end
+
+    cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/admin.yml"
+    #cfg.vm.provision "shell", path: "./script/admin.bash"
+  end
+
+
+  config.vm.define :ubuntu01 do |cfg|
+    cfg.vm.hostname = "ubuntu01"
+    cfg.vm.network "private_network", ip: "192.168.56.61"
+    cfg.vm.disk :disk, size: "100GB", primary: true
+    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
+    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
+    cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
+    #cfg.vm.provision "shell", path: "./script/ubuntu.bash"
+  end
+
+  config.vm.define :ubuntu02 do |cfg|
+    cfg.vm.hostname = "ubuntu02"
+    cfg.vm.network "private_network", ip: "192.168.56.62"
+    cfg.vm.disk :disk, size: "100GB", primary: true
+    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
+    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
+    cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
+    #cfg.vm.provision "shell", path: "./script/ubuntu.bash"
+  end
+
+  config.vm.define :ubuntu03 do |cfg|
+    cfg.vm.hostname = "ubuntu03"
+    cfg.vm.network "private_network", ip: "192.168.56.63"
+    cfg.vm.disk :disk, size: "100GB", primary: true
+    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
+    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
+    cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
+    #cfg.vm.provision "shell", path: "./script/ubuntu.bash"
+  end
+
+  config.vm.provision "file", source: "./ssh/config",             destination: "$HOME/.ssh/config"
+  config.vm.provision "file", source: "./ssh/id_rsa_vagrant",     destination: "$HOME/.ssh/id_rsa"
+  config.vm.provision "file", source: "./ssh/id_rsa_vagrant.pub", destination: "$HOME/.ssh/id_rsa.pub"
+  config.vm.provision "shell", privileged: false, inline: "chmod 600 $HOME/.ssh/id_rsa* && chmod 600 $HOME/.ssh/config"
+end
