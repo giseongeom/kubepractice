@@ -1,11 +1,11 @@
 #cloud-config
 bootcmd:
- - cloud-init-per once update_hosts_1 echo '' >> /etc/hosts
- - cloud-init-per once update_hosts_2 echo '192.168.56.60 admin' >> /etc/hosts
- - cloud-init-per once update_hosts_3 echo '192.168.56.61 ubuntu01' >> /etc/hosts
- - cloud-init-per once update_hosts_4 echo '192.168.56.62 ubuntu02' >> /etc/hosts
- - cloud-init-per once update_hosts_5 echo '192.168.56.62 ubuntu03' >> /etc/hosts
- - cloud-init-per once update_hosts_6 echo '' >> /etc/hosts
+  - cloud-init-per once update_hosts_1 echo '' >> /etc/hosts
+  - cloud-init-per once update_hosts_2 echo '192.168.56.60 admin' >> /etc/hosts
+  - cloud-init-per once update_hosts_3 echo '192.168.56.61 ubuntu01' >> /etc/hosts
+  - cloud-init-per once update_hosts_4 echo '192.168.56.62 ubuntu02' >> /etc/hosts
+  - cloud-init-per once update_hosts_5 echo '192.168.56.62 ubuntu03' >> /etc/hosts
+  - cloud-init-per once update_hosts_6 echo '' >> /etc/hosts
 package_upgrade: false
 package_update: false
 write_files:
@@ -42,7 +42,7 @@ runcmd:
   - sed -i -e 's/archive.ubuntu.com/mirror.kakao.com/g' /etc/apt/sources.list
   - apt update -y
     # Install additional packages
-  - apt install -y build-essential ca-certificates curl dnsutils git htop jq lsb-release net-tools p7zip-full unzip vim-nox wget python3-pip python3-dev python3-setuptools python-is-python3
+  - apt install -y ca-certificates curl dnsutils git htop jq net-tools
     # Enable rc.local
   - sed -i -e '$ a\\n\[Install]\nWantedBy=multi-user.target' /lib/systemd/system/rc-local.service
   - systemctl enable rc-local.service

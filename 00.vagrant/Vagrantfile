@@ -2,7 +2,8 @@
 # vi: set ft=ruby :
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
-  config.vm.boot_timeout = 300
+  config.vm.box_check_update = false
+  config.vm.boot_timeout = 600
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # ssh
@@ -11,13 +12,20 @@ Vagrant.configure("2") do |config|
 
   # VirtualBox
   config.vm.provider "virtualbox" do |vb|
-    # Don't boot with headless mode
     vb.gui = false
+
+    if Vagrant::Util::Platform.windows? then
+      vb.customize ['modifyvm', :id, '--pae', 'off']
+      vb.customize ['modifyvm', :id, '--nestedpaging', 'off']
+      vb.customize ['modifyvm', :id, '--paravirtprovider', 'none']
+    end
+
     vb.check_guest_additions = false
     vb.memory = 8192
-    vb.cpus = 4
+    vb.cpus   = 4
     vb.customize ["modifyvm", :id, "--audio", "none"] # https://gist.github.com/mxey/ce6911724acee4517692bf683ee90624
     vb.customize ['modifyvm', :id, '--graphicscontroller', 'vmsvga']
+    vb.customize ['modifyvm', :id, '--cableconnected1', 'on']
   end
 
   config.vm.define :admin do |cfg|
@@ -26,11 +34,11 @@ Vagrant.configure("2") do |config|
 
     cfg.vm.provider "virtualbox" do |vb|
       vb.memory = 4096
-      vb.cpus = 2
+      vb.cpus   = 2
     end
 
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/admin.yml"
-    #cfg.vm.provision "shell", path: "./script/admin.bash"
+    cfg.vm.provision "shell", path: "./script/admin.bash"
   end
 
 
@@ -41,7 +49,7 @@ Vagrant.configure("2") do |config|
     cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
     cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
-    #cfg.vm.provision "shell", path: "./script/ubuntu.bash"
+    cfg.vm.provision "shell", path: "./script/ubuntu.bash"
   end
 
   config.vm.define :ubuntu02 do |cfg|
@@ -51,7 +59,7 @@ Vagrant.configure("2") do |config|
     cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
     cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
-    #cfg.vm.provision "shell", path: "./script/ubuntu.bash"
+    cfg.vm.provision "shell", path: "./script/ubuntu.bash"
   end
 
   config.vm.define :ubuntu03 do |cfg|
@@ -61,7 +69,7 @@ Vagrant.configure("2") do |config|
     cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
     cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
-    #cfg.vm.provision "shell", path: "./script/ubuntu.bash"
+    cfg.vm.provision "shell", path: "./script/ubuntu.bash"
   end
 
   config.vm.provision "file", source: "./ssh/config",             destination: "$HOME/.ssh/config"

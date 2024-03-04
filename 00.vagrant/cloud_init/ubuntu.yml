@@ -1,11 +1,11 @@
 #cloud-config
 bootcmd:
- - cloud-init-per once update_hosts_1 echo '' >> /etc/hosts
- - cloud-init-per once update_hosts_2 echo '192.168.56.60 admin' >> /etc/hosts
- - cloud-init-per once update_hosts_3 echo '192.168.56.61 ubuntu01' >> /etc/hosts
- - cloud-init-per once update_hosts_4 echo '192.168.56.62 ubuntu02' >> /etc/hosts
- - cloud-init-per once update_hosts_5 echo '192.168.56.62 ubuntu03' >> /etc/hosts
- - cloud-init-per once update_hosts_6 echo '' >> /etc/hosts
+  - cloud-init-per once update_hosts_1 echo '' >> /etc/hosts
+  - cloud-init-per once update_hosts_2 echo '192.168.56.60 admin' >> /etc/hosts
+  - cloud-init-per once update_hosts_3 echo '192.168.56.61 ubuntu01' >> /etc/hosts
+  - cloud-init-per once update_hosts_4 echo '192.168.56.62 ubuntu02' >> /etc/hosts
+  - cloud-init-per once update_hosts_5 echo '192.168.56.62 ubuntu03' >> /etc/hosts
+  - cloud-init-per once update_hosts_6 echo '' >> /etc/hosts
 package_upgrade: false
 package_update: false
 write_files:
@@ -34,14 +34,14 @@ write_files:
         ServerAliveInterval 60
         ServerAliveCountMax 5
 disk_setup:
-   /dev/sdc:
-       table_type: 'mbr'
-       layout: True
-       overwrite: True
-   /dev/sdd:
-       table_type: 'mbr'
-       layout: True
-       overwrite: True
+  /dev/sdc:
+      table_type: 'mbr'
+      layout: True
+      overwrite: True
+  /dev/sdd:
+      table_type: 'mbr'
+      layout: True
+      overwrite: True
 users:
   - default
   - name: vagrant
