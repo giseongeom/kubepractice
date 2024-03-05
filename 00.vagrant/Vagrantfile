@@ -14,12 +14,6 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
 
-    if Vagrant::Util::Platform.windows? then
-      vb.customize ['modifyvm', :id, '--pae', 'off']
-      vb.customize ['modifyvm', :id, '--nestedpaging', 'off']
-      vb.customize ['modifyvm', :id, '--paravirtprovider', 'none']
-    end
-
     vb.check_guest_additions = false
     vb.memory = 8192
     vb.cpus   = 4
@@ -45,9 +39,9 @@ Vagrant.configure("2") do |config|
   config.vm.define :ubuntu01 do |cfg|
     cfg.vm.hostname = "ubuntu01"
     cfg.vm.network "private_network", ip: "192.168.56.61"
-    cfg.vm.disk :disk, size: "100GB", primary: true
-    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
-    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
+    cfg.vm.disk :disk, size: "100GB", name: "extra_disk_00"
+    cfg.vm.disk :disk, size:  "10GB", name: "extra_disk_01"
+    cfg.vm.disk :disk, size:  "10GB", name: "extra_disk_02"
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
     cfg.vm.provision "shell", path: "./script/ubuntu.bash"
   end
@@ -55,9 +49,9 @@ Vagrant.configure("2") do |config|
   config.vm.define :ubuntu02 do |cfg|
     cfg.vm.hostname = "ubuntu02"
     cfg.vm.network "private_network", ip: "192.168.56.62"
-    cfg.vm.disk :disk, size: "100GB", primary: true
-    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
-    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
+    cfg.vm.disk :disk, size: "100GB", name: "extra_disk_00"
+    cfg.vm.disk :disk, size:  "10GB", name: "extra_disk_01"
+    cfg.vm.disk :disk, size:  "10GB", name: "extra_disk_02"
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
     cfg.vm.provision "shell", path: "./script/ubuntu.bash"
   end
@@ -65,9 +59,9 @@ Vagrant.configure("2") do |config|
   config.vm.define :ubuntu03 do |cfg|
     cfg.vm.hostname = "ubuntu03"
     cfg.vm.network "private_network", ip: "192.168.56.63"
-    cfg.vm.disk :disk, size: "100GB", primary: true
-    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_01"
-    cfg.vm.disk :disk, size: "10GB", name: "extra_disk_02"
+    cfg.vm.disk :disk, size: "100GB", name: "extra_disk_00"
+    cfg.vm.disk :disk, size:  "10GB", name: "extra_disk_01"
+    cfg.vm.disk :disk, size:  "10GB", name: "extra_disk_02"
     cfg.vm.cloud_init :user_data, content_type: "text/cloud-config", path: "./cloud_init/ubuntu.yml"
     cfg.vm.provision "shell", path: "./script/ubuntu.bash"
   end
