@@ -13,6 +13,9 @@ git clone https://github.com/giseongeom/kubepractice.git
 cd kubepractice/00.vagrant/
 vagrant up --provider virtualbox
 ```
+## Demo
+
+[![asciicast](https://asciinema.org/a/VvoZDuejLeGWBcDVHv0eDHwGy.svg)](https://asciinema.org/a/VvoZDuejLeGWBcDVHv0eDHwGy)
 
 ## Tip & Trick
 
