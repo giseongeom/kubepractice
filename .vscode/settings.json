@@ -1,0 +1,12 @@
+{
+
+  "terminal.integrated.fontFamily": "'Hack Nerd Font', 'CaskaydiaCove Nerd Font Mono', 'Cascadia Code PL'",
+  "terminal.integrated.fontWeight": "normal",
+  "terminal.integrated.fontWeightBold": "bold",
+  "terminal.integrated.fontSize": 16,
+  "terminal.integrated.enablePersistentSessions": false,
+  "terminal.integrated.cwd": "${fileDirname}",
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.gpuAcceleration": "off",
+
+}
