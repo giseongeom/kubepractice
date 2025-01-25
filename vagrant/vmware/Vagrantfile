@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-22.04"
+  config.vm.box_check_update = false
+  config.vm.boot_timeout = 600
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
+  # ssh
+  config.ssh.forward_agent = false
+  config.ssh.insert_key = false
+
+  # VMware
+  config.vm.provider "vmware_desktop" do |vmware|
+    vmware.gui = false
+    vmware.memory = 8192
+    vmware.cpus = 4
+  end
+
+  config.vm.define :admin do |admin|
+    admin.vm.hostname = "admin"
+    admin.vm.network "private_network", ip: "192.168.1.100"
+
+    admin.vm.provider "vmware_desktop" do |vmware|
+      vmware.memory = 4096
+      vmware.cpus   = 2
+    end
+
+  end
+end
